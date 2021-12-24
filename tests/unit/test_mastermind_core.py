@@ -1,7 +1,12 @@
 from mastermind.mastermind_core import MastermindCore
+from mastermind.mastermind_core import BadColoursSetError
+
+import pytest
 
 
 def test_configure_default():
+    """ Validating that default configuration initialises all preperties properly
+    """
     mastermind = MastermindCore()
     mastermind.configure()
 
@@ -12,6 +17,9 @@ def test_configure_default():
 
 
 def test_configure():
+    """ Validating that configuration initialises properties according to the passed
+        arguments.
+    """
     mastermind = MastermindCore()
     mastermind.configure(
         code_length = 3,
@@ -27,6 +35,8 @@ def test_configure():
 
 
 def test_init_default():
+    """ Validating that default constructor initialises all properties properly
+    """
     mastermind = MastermindCore()
 
     assert mastermind.code_length == 4
@@ -39,6 +49,8 @@ def test_init_default():
 
 
 def test_reset_game():
+    """ Validating that reset games takes into account a change of properties
+    """
     mastermind = MastermindCore()
     mastermind.configure(
         code_length = 3,
@@ -53,7 +65,44 @@ def test_reset_game():
 
 
 def test_generate_code_peg_with_duplicates():
+    """ Validating the peg generation. All generated pegs shall be comprised
+        within the pegs set.
+    """
     mastermind = MastermindCore()
     generator = mastermind.generate_code_peg()
-    for i in range(30):
+    for i in range(500):
         assert next(generator) in mastermind.colours_set
+
+
+def test_generate_code_peg_with_no_duplicates():
+    """ Validating the peg generation when no duplicates are allowed. All
+        generated pegs shall be comprised within the pegs set, and an exception
+        shall be raised when no colours are available in the set.
+    """
+    mastermind = MastermindCore()
+    mastermind.allow_duplicates = False
+    mastermind.colours_set = ['Red', 'Green', 'Blue']
+
+    # Test not exceeding the set's limit
+    generator = mastermind.generate_code_peg()
+    for i in range(3):
+        print(f"Iteration {i}")
+        assert next(generator) in mastermind.colours_set
+
+    # Test exceeding the set's limit
+    generator = mastermind.generate_code_peg()
+    with pytest.raises(StopIteration):
+        for i in range(4):
+            print(f"Iteration {i}")
+            assert next(generator) in mastermind.colours_set
+
+
+def test_bad_colours_set():
+    """ Validating that the BadColoursSetError exception is raised when required
+    """
+    mastermind = MastermindCore()
+    with pytest.raises(BadColoursSetError):
+        mastermind.configure(
+            code_length = 4,
+            allow_duplicates = False,
+            colours_set = ['Red', 'Green', 'Blue'])
