@@ -17,7 +17,7 @@ class BadGuessLengthError(Exception):
     pass
 
 
-class BadColoursSet(Exception):
+class BadColoursSetError(Exception):
     pass
 
 
@@ -55,9 +55,9 @@ class MastermindCore:
         # Check out that the colours set is big enough when no duplicates are allowed
         size_diff = len(colours_set) < code_length
         if not allow_duplicates and size_diff:
-            raise BadColoursSet( (f"The colours set is too small ({len(colours_set)}) "
-                                   "for the expected code length ({code_length}) "
-                                   "and no duplicates are allowed."))
+            raise BadColoursSetError((f"The colours set is too small ({len(colours_set)}) "
+                                       "for the expected code length ({code_length}) "
+                                       "and no duplicates are allowed."))
 
         logging.info("Configuration updated:")
         logging.info(f" - code_length: {self.code_length}")
