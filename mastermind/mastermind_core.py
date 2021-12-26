@@ -72,6 +72,7 @@ class MastermindCore:
         generator = self.generate_code_peg()
         self.secret_code = [ next(generator) for _ in range(self.code_length) ]
         self.player_guesses = []
+        logging.info(f"New secret code generated: {self.secret_code}")
 
 
     def generate_code_peg(self):
@@ -102,18 +103,25 @@ class MastermindCore:
         if len(wrong_colours) > 0:
             raise UnknownColourError(f"The player's guess contains colours that are not part of the current set: {', '.join(wrong_colours)}.")
 
+        logging.info(f"Adding new guess #{len(self.player_guesses)}")
+
         # Find out how many peg of the correct colour are at the correct location
         matching_locations_count = len([x for i, x in enumerate(self.secret_code) if guess[i] == x])
+        logging.info(f"Matching locations: {matching_locations_count}")
 
         matching_colours = Counter(guess) & Counter(self.secret_code)
         matching_colours_count = sum(matching_colours.values())
+        logging.info(f"Matching colours: {matching_colours_count}")
 
         self.player_guesses.append({'guess': guess,
                                     'matching_places': matching_locations_count,
                                     'matching_colours': matching_colours_count - matching_locations_count})
 
         player_won = matching_locations_count == len(self.secret_code)
-        max_tries_reached = len(self.player_guesses) > self.max_tries
+        max_tries_reached = len(self.player_guesses) >= self.max_tries
+
+        logging.info((f"Guess added. Player won: {player_won}, current tries: "
+                      f"{len(self.player_guesses)}, max tries reached: {max_tries_reached}"))
 
         if not player_won and max_tries_reached:
             raise MaxTriesReachedError(f"Solution not found within {self.max_tries} tries")
