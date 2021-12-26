@@ -13,21 +13,21 @@ def test_add_valid_guesses():
         code_length = 4,
         colours_set = ['Red', 'Green', 'Blue', 'Yellow']
     )
-    mastermind.secret_code = ['Green', 'Red', 'Blue', 'Blue']
+    mastermind._secret_code = ['Green', 'Red', 'Blue', 'Blue']
 
     ret = mastermind.add_guess(guess1)
     assert ret == False
-    assert len(mastermind.player_guesses) == 1
-    assert mastermind.player_guesses[0]['guess'] == guess1
-    assert mastermind.player_guesses[0]['matching_places'] == 1
-    assert mastermind.player_guesses[0]['matching_colours'] == 2
+    assert mastermind.nb_player_guesses == 1
+    assert mastermind._player_guesses[0]['guess'] == guess1
+    assert mastermind._player_guesses[0]['matching_places'] == 1
+    assert mastermind._player_guesses[0]['matching_colours'] == 2
 
     ret = mastermind.add_guess(guess2)
     assert ret == False
-    assert len(mastermind.player_guesses) == 2
-    assert mastermind.player_guesses[1]['guess'] == guess2
-    assert mastermind.player_guesses[1]['matching_places'] == 2
-    assert mastermind.player_guesses[1]['matching_colours'] == 2
+    assert mastermind.nb_player_guesses == 2
+    assert mastermind._player_guesses[1]['guess'] == guess2
+    assert mastermind._player_guesses[1]['matching_places'] == 2
+    assert mastermind._player_guesses[1]['matching_colours'] == 2
 
 
 def test_add_winning_guess():
@@ -41,11 +41,11 @@ def test_add_winning_guess():
         code_length = 4,
         colours_set = ['Red', 'Green', 'Blue', 'Yellow']
     )
-    mastermind.secret_code = ['Green', 'Red', 'Blue', 'Blue']
+    mastermind._secret_code = ['Green', 'Red', 'Blue', 'Blue']
     ret = mastermind.add_guess(guess)
 
     assert ret == True
-    assert len(mastermind.player_guesses) == 1
-    assert mastermind.player_guesses[0]['guess'] == guess
-    assert mastermind.player_guesses[0]['matching_places'] == 4
-    assert mastermind.player_guesses[0]['matching_colours'] == 0
+    assert mastermind.nb_player_guesses == 1
+    assert mastermind._player_guesses[0]['guess'] == guess
+    assert mastermind._player_guesses[0]['matching_places'] == 4
+    assert mastermind._player_guesses[0]['matching_colours'] == 0

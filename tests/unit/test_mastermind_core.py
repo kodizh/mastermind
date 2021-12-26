@@ -11,7 +11,7 @@ def test_configure_default():
     mastermind.configure()
 
     assert mastermind.code_length == 4
-    assert mastermind.allow_duplicates == True
+    assert mastermind._allow_duplicates == True
     assert mastermind.max_tries == 10
     assert mastermind.colours_set == set(['Green', 'Yellow', 'Red', 'Orange', 'Blue', 'Black', 'White'])
 
@@ -29,7 +29,7 @@ def test_configure():
     )
 
     assert mastermind.code_length == 3
-    assert mastermind.allow_duplicates == False
+    assert mastermind._allow_duplicates == False
     assert mastermind.max_tries == 12
     assert mastermind.colours_set == set(['Red', 'Green', 'Blue'])
 
@@ -40,12 +40,12 @@ def test_init_default():
     mastermind = MastermindCore()
 
     assert mastermind.code_length == 4
-    assert mastermind.allow_duplicates == True
+    assert mastermind._allow_duplicates == True
     assert mastermind.max_tries == 10
     assert mastermind.colours_set == set(['Green', 'Yellow', 'Red', 'Orange', 'Blue', 'Black', 'White'])
-    assert len(mastermind.secret_code) == 4
-    assert len([x for x in mastermind.secret_code if x not in mastermind.colours_set]) == 0
-    assert len(mastermind.player_guesses) == 0
+    assert len(mastermind._secret_code) == 4
+    assert len([x for x in mastermind._secret_code if x not in mastermind.colours_set]) == 0
+    assert len(mastermind._player_guesses) == 0
 
 
 def test_reset_game():
@@ -59,9 +59,9 @@ def test_reset_game():
     )
     mastermind.reset_game()
 
-    assert len(mastermind.secret_code) == 3
-    assert len([x for x in mastermind.secret_code if x not in mastermind.colours_set]) == 0
-    assert len(mastermind.player_guesses) == 0
+    assert len(mastermind._secret_code) == 3
+    assert len([x for x in mastermind._secret_code if x not in mastermind.colours_set]) == 0
+    assert len(mastermind._player_guesses) == 0
 
 
 def test_generate_code_peg_with_duplicates():
@@ -80,8 +80,8 @@ def test_generate_code_peg_with_no_duplicates():
         shall be raised when no colours are available in the set.
     """
     mastermind = MastermindCore()
-    mastermind.allow_duplicates = False
-    mastermind.colours_set = ['Red', 'Green', 'Blue']
+    mastermind._allow_duplicates = False
+    mastermind._colours_set = ['Red', 'Green', 'Blue']
 
     # Test not exceeding the set's limit
     generator = mastermind.generate_code_peg()
