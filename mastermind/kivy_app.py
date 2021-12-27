@@ -13,9 +13,9 @@ from kivy.uix.image import Image
 
 from kivy.properties import ListProperty
 
-from mastermind_core import MastermindCore
-from mastermind_core import MaxTriesReachedError
-from mastermind_core import BadGuessLengthError
+from mastermind.mastermind_core import MastermindCore
+from mastermind.mastermind_core import MaxTriesReachedError
+from mastermind.mastermind_core import BadGuessLengthError
 
 import logging
 
@@ -29,23 +29,11 @@ class MastermindBoard(PageLayout):
     """ Base widget class for the application.
     """
 
-    """ Defines possible peg colours using RGBA values
-    """
-    colours = {
-        "Red": [1, 0, 0, 1],
-        "Green": [.6, 1, .3, 1],
-        "Blue": [.3, .6, 1, 1],
-        "Yellow": [1, 1, .3, 1],
-        "Orange": [1, .6, 0, 1],
-        "White": [1, 1, 1, 1],
-        "Black": [0, 0, 0, 1]
-    }
-
-    """ Define the board background texture
-    """
-    background_texture = Image(source = '../resources/light_wood_texture.jpg').texture
+    # Define the board background texture
+    background_texture = Image(source = 'resources/light_wood_texture.jpg').texture
     background_texture.wrap = 'repeat'
     background_texture.uvsize = (4, 4)
+
 
     def __init__(self, **kwargs):
         super(MastermindBoard, self).__init__(**kwargs)
@@ -72,6 +60,10 @@ class MastermindBoard(PageLayout):
 
 
     def draw_main_board(self):
+        """ Draw the board that contains the spot, the indications on correct
+            positions and colours, and the validation button.
+        """
+
         board = self.ids.player_board
         # The number of columns is the size of the board + the indications on
         # successful positions and colours + the validate button
@@ -127,8 +119,7 @@ class MastermindBoard(PageLayout):
         for peg_colour in self.logic_manager.colours_set:
             peg = Factory.Peg()
             peg.peg_color = peg_colour
-            peg.background_normal = f'../resources/peg_{peg_colour}.png'
-            #peg.background_color = MastermindBoard.colours[peg_colour]
+            peg.background_normal = f'resources/peg_{peg_colour}.png'
             peg.bind(on_press = self.select_colour)
             reserv.add_widget(peg)
 
@@ -143,8 +134,8 @@ class MastermindBoard(PageLayout):
         """ Action to position a peg onto the player board
         """
         if self.selected_colour:
-            peg_spot.background_normal = f'../resources/peg_{self.selected_colour}.png'
-            peg_spot.background_disabled_normal = f'../resources/peg_{self.selected_colour}.png'
+            peg_spot.background_normal = f'resources/peg_{self.selected_colour}.png'
+            peg_spot.background_disabled_normal = f'resources/peg_{self.selected_colour}.png'
 
             peg_row = peg_spot.spot_position[0]
             peg_col = peg_spot.spot_position[1]
@@ -266,7 +257,3 @@ class MastermindApp(App):
         board.add_logic_manager(self.mastermind_core)
         board.init_game()
         return board
-
-
-app = MastermindApp()
-app.run()
