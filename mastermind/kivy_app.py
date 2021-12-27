@@ -2,16 +2,14 @@ import kivy
 from kivy.app import App
 
 from kivy.factory import Factory
+from kivy.core.window import Window
 
-from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.pagelayout import PageLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.widget import Widget
 from kivy.uix.button import Label
 from kivy.uix.button import Button
 from kivy.uix.image import Image
-
-from kivy.properties import ListProperty
 
 from mastermind.mastermind_core import MastermindCore
 from mastermind.mastermind_core import MaxTriesReachedError
@@ -55,6 +53,10 @@ class MastermindBoard(PageLayout):
         self.ids.player_board.clear_widgets(self.ids.player_board.children)
         self.ids.pegs_reservoir.clear_widgets(self.ids.pegs_reservoir.children)
 
+        # Set window size
+        Window.size_hint = (None, None)
+        Window.size = (800, self.logic_manager.max_tries * 50 + 150)
+
         self.draw_main_board()
         self.draw_pegs_reservoir()
 
@@ -68,17 +70,30 @@ class MastermindBoard(PageLayout):
         # The number of columns is the size of the board + the indications on
         # successful positions and colours + the validate button
         board.cols = self.logic_manager.code_length + 3
-        board.row_force_default = True
-        board.row_default_height = 50
+
+        # Add the line on the top that contains the hidden secret code
+        lbl = Label(text="Correct positions", color=[0, 0, 0, 1])
+        board.add_widget(lbl)
+        code = self.logic_manager.secret_code
+        for col in range(self.logic_manager.code_length):
+            spot = Factory.HiddenSpot()
+            spot.hidden_colour = code[col]
+            board.add_widget(spot)
+            self.widgets[f'hidden_spot_{col}'] = spot
+
+        board.add_widget(Label(text="Correct colours", color=[0, 0, 0, 1]))
+        board.add_widget(Widget())
 
         max_rows = self.logic_manager.max_tries -1
         for row in range(max_rows, -1, -1):
-            position_checker = GridLayout()
-            position_checker.rows = 1
+
+            # Add the widget that shows the correct positions for each guess
+            position_checker = GridLayout(rows=1)
             position_checker.add_widget(Widget())
             board.add_widget(position_checker)
             self.widgets[f"pos_check_{row}"] = position_checker
 
+            # Add the number of columns matching the number of pegs to guess
             max_cols = self.logic_manager.code_length
             for col in range(self.logic_manager.code_length):
                 spot = Factory.PegSpot()
@@ -94,12 +109,14 @@ class MastermindBoard(PageLayout):
                 board.add_widget(spot)
                 self.widgets[f"peg_spot_{row}_{col}"] = spot
 
+            # Add the widget that shows the correct colours for each guess
             colours_checker = GridLayout()
             colours_checker.rows = 1
             colours_checker.add_widget(Widget())
             board.add_widget(colours_checker)
             self.widgets[f"col_check_{row}"] = colours_checker
 
+            # Add the button that allows the player to validate the current row
             button_validate = Button(
                 text = f"",
                 size_hint = (None, None),
@@ -165,6 +182,12 @@ class MastermindBoard(PageLayout):
                 self.update_board_state()
 
         except MaxTriesReachedError as mtre:
+            # Reveal the hidden secret code
+            for col in range(self.logic_manager.code_length):
+                spot = self.widgets[f'hidden_spot_{col}']
+                spot.background_normal = f'resources/peg_{spot.hidden_colour}.png'
+                spot.background_disabled_normal = f'resources/peg_{spot.hidden_colour}.png'
+
             self.display_end_of_game_popup(has_won=False)
 
         except BadGuessLengthError as bgle:
