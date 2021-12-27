@@ -43,8 +43,8 @@ def test_init_default():
     assert mastermind._allow_duplicates == True
     assert mastermind.max_tries == 10
     assert mastermind.colours_set == set(['Green', 'Yellow', 'Red', 'Orange', 'Blue', 'Black', 'White'])
-    assert len(mastermind._secret_code) == 4
-    assert len([x for x in mastermind._secret_code if x not in mastermind.colours_set]) == 0
+    assert len(mastermind.secret_code) == 4
+    assert len([x for x in mastermind.secret_code if x not in mastermind.colours_set]) == 0
     assert len(mastermind._player_guesses) == 0
 
 
@@ -59,8 +59,8 @@ def test_reset_game():
     )
     mastermind.reset_game()
 
-    assert len(mastermind._secret_code) == 3
-    assert len([x for x in mastermind._secret_code if x not in mastermind.colours_set]) == 0
+    assert len(mastermind.secret_code) == 3
+    assert len([x for x in mastermind.secret_code if x not in mastermind.colours_set]) == 0
     assert len(mastermind._player_guesses) == 0
 
 

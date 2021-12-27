@@ -72,6 +72,11 @@ class MastermindCore:
 
 
     @property
+    def secret_code(self):
+        return self._secret_code
+
+
+    @property
     def max_tries(self):
         logging.info("Get Max Tries")
         return self._max_tries
