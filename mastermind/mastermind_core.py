@@ -36,9 +36,6 @@ class MastermindCore:
         # Initialise default parameters
         self.configure()
 
-        # Set up a new game
-        self.reset_game()
-
 
     def configure(self,
                   code_length = 4,
@@ -78,7 +75,6 @@ class MastermindCore:
 
     @property
     def max_tries(self):
-        logging.info("Get Max Tries")
         return self._max_tries
 
 
