@@ -1,0 +1,97 @@
+# Mastermind.kv implementation
+
+<Peg@Button>
+	# Display pegs on the bottom of the screen, displaying and storing the
+	# associated colour.
+	peg_color: ''
+
+	size_hint: None, None
+	size: 50, 50
+
+
+<PegSpot@Peg>
+	# Define a spot on the mastermind board to receive a peg, and keeps track of
+	# its position on the board.
+	spot_position: []
+	size_hint_x: None
+	size_x: 50
+	background_normal: '../resources/empty_hole.png'
+	background_disabled_normal: '../resources/empty_hole.png'
+
+
+<ResultValidator@Label>
+	# Display the result of a validated row. Used for either validating a
+	# correct position and a correct colour.
+	size_hint: None, None
+	size: 50, 50
+
+
+<PositionValidator@ResultValidator>
+	# Specialised validator widget that shows the number of correct positions in
+	# the player guess.
+	canvas:
+		Rectangle:
+	        pos: self.pos
+	        size: self.size
+	        source: '../resources/validator_position.png'
+
+
+<ColourValidator@ResultValidator>
+	# Specialised validator widget that shows the number of correct colours in
+	# the player guess.
+	canvas:
+		Rectangle:
+	        pos: self.pos
+	        size: self.size
+	        source: '../resources/validator_colour.png'
+
+
+<EndGame@Popup>
+	auto_dismiss: True
+	size_hint: 0.6, 0.5
+	pos_hint: {"x":0.2, "top": 0.9}
+
+	title: "Game is finished"
+
+	BoxLayout:
+		orientation: "vertical"
+		size: root.width, root.height
+		Label:
+			id: end_game_state
+			text: ""
+			font_size: 24
+		Button:
+			id: play_again_button
+			size_hint_y: None
+			size_y: 20
+			text: "Play again!"
+			font_size: 24
+
+
+## MAIN APP LAYOUT #############################################################
+
+<PageLayout>:
+
+## PAGE 1 ######################################################################
+
+    GridLayout:
+        cols: 1
+        canvas:
+	        Rectangle:
+	            pos: self.pos
+	            size: self.size
+	            texture: root.background_texture
+
+        GridLayout:
+            id: player_board
+
+        GridLayout:
+			rows: 1
+			size_hint_y: None
+
+			# The empty Widgets allows centering
+			Widget:
+			BoxLayout:
+			    id: pegs_reservoir
+				orientation: 'horizontal'
+			Widget:
